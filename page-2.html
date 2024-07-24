@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    
+    <title>Page 2</title>
+    <script type="module" crossorigin src="/goit-js-hw-11/assets/vendor-8c59ed88.js"></script>
+    <script type="module" crossorigin src="/goit-js-hw-11/assets/main-c4012fba.js"></script>
+    <link rel="stylesheet" href="/goit-js-hw-11/assets/vendor-1cd1f9d9.css">
+  </head>
+  <body>
+    <section>
+      <a href="./index.html">Go to home</a>
+      <h1>Welcome to page 2</h1>
+    </section>
+    <form class="search-form">
+      <input type="text" id="search" placeholder="Search images..." />
+      <button type="submit" class="button">Search</button>
+    </form>
+    <div id="image-result">
+      <ul class="image-list"></ul>
+    </div>
+  </body>
+</html>
+
+<style>
+  .search-form {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #search {
+    padding: 8px;
+    font-family: Montserrat, sans-serif;
+    font-weight: 400;
+  }
+
+  .button {
+    background-color: #4e75ff;
+    border: none;
+    height: 100%;
+    cursor: pointer;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 10%;
+    font-family: Montserrat;
+    font-weight: 500;
+  }
+
+  button:hover {
+    background-color: #6c8cff;
+  }
+
+  .image-list {
+    display: flex;
+    list-style-type: none;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-list li {
+    width: 360px;
+    height: 200px;
+    border: 1px solid;
+  }
+
+  img {
+    width: 100%;
+    height: 152px;
+    object-fit: cover;
+  }
+
+  .properties {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .property {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .property-name {
+    display: block;
+    font-weight: bold;
+  }
+
+  .property-value {
+    display: block;
+  }
+
+  .loader {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    position: relative;
+    animation: rotate 1s linear infinite;
+    margin: auto; /* Center the loader */
+    display: block; /* Ensure the loader is block-level */
+  }
+
+  .loader::before {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    inset: 0px;
+    border-radius: 50%;
+    border: 5px solid #000000;
+    animation: prixClipFix 2s linear infinite;
+  }
+
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes prixClipFix {
+    0% {
+      clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0);
+    }
+    25% {
+      clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0);
+    }
+    50% {
+      clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%);
+    }
+    75% {
+      clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%);
+    }
+    100% {
+      clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
+    }
+  }
+</style>
