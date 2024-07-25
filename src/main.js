@@ -1,65 +1,74 @@
-// Opisany w dokumentacji
 import iziToast from 'izitoast';
-// Opcjonalny import stylów
 import 'izitoast/dist/css/iziToast.min.css';
-// Opisany w dokumentacji
 import SimpleLightbox from 'simplelightbox';
-// Opcjonalny import stylów
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import axios from 'axios';
 
-document.querySelector('.search-form').addEventListener('submit', event => {
-  event.preventDefault();
+const moreBtn = document.querySelector('.more-btn');
+let page = 1;
+let perPage = 40;
 
-  const search = document.querySelector('#search').value;
-  const options = {
+const imageResult = document.querySelector('#image-result');
+const loader = document.createElement('span');
+loader.classList.add('loader');
+
+const imageList = document.querySelector('.image-list');
+const lightbox = new SimpleLightbox('.image-list a');
+
+async function fetchPics(search, page, perPage) {
+  const params = new URLSearchParams({
     key: '45031413-5a86df50e03b9d2dcce76b542',
     q: search,
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: true,
-  };
+    per_page: perPage,
+    page: page,
+  });
 
-  const imageResult = document.querySelector('#image-result');
-  const loader = document.createElement('span');
-  loader.classList.add('loader');
+  const response = await axios.get(`https://pixabay.com/api/?${params}`);
+  return response.data;
+}
 
-  const imageList = document.querySelector('.image-list');
-  imageList.innerHTML = '';
-  imageResult.appendChild(loader);
+function renderPics(pics) {
+  pics.forEach(hit => {
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = hit.largeImageURL;
+    link.classList.add('image-link');
+    const img = document.createElement('img');
+    img.src = hit.webformatURL;
+    img.alt = hit.tags;
+    link.appendChild(img);
+    li.appendChild(link);
+    li.innerHTML += `<div class="properties">
+      <div class="property"><span class="property-name">Likes</span> <span class="property-value">${hit.likes}</span></div>
+      <div class="property"><span class="property-name">Views</span> <span class="property-value">${hit.views}</span></div>
+      <div class="property"><span class="property-name">Comments</span> <span class="property-value">${hit.comments}</span></div>
+      <div class="property"><span class="property-name">Downloads</span> <span class="property-value">${hit.downloads}</span></div>
+    </div>`;
+    imageList.appendChild(li);
+  });
 
-  fetch(
-    `https://pixabay.com/api/?key=${options.key}&q=${encodeURIComponent(
-      options.q
-    )}&image_type=${options.image_type}&orientation=${
-      options.orientation
-    }&safesearch=${options.safesearch}`
-  )
-    .then(response => response.json())
-    .then(data => {
+  lightbox.refresh();
+}
+
+document
+  .querySelector('.search-form')
+  .addEventListener('submit', async event => {
+    event.preventDefault();
+    const search = document.querySelector('#search').value;
+    imageResult.appendChild(loader);
+    imageList.innerHTML = '';
+    moreBtn.style.display = 'none';
+
+    try {
+      const pics = await fetchPics(search, 1, perPage);
       loader.remove();
-      if (data.hits.length > 0) {
-        data.hits.forEach(hit => {
-          const li = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = hit.largeImageURL;
-          link.classList.add('image-link');
-          const img = document.createElement('img');
-          img.src = hit.webformatURL;
-          img.alt = hit.tags;
-          link.appendChild(img);
-          li.appendChild(link);
-          li.innerHTML += `<div class="properties">
-            <div class="property"><span class="property-name">Likes</span> <span class="property-value">${hit.likes}</span></div>
-            <div class="property"><span class="property-name">Views</span> <span class="property-value">${hit.views}</span></div>
-            <div class="property"><span class="property-name">Comments</span> <span class="property-value">${hit.comments}</span></div>
-            <div class="property"><span class="property-name">Downloads</span> <span class="property-value">${hit.downloads}</span></div>
-            </div>
-            `;
-          imageList.appendChild(li);
-        });
-
-        const lightbox = new SimpleLightbox('.image-list a');
-        lightbox.refresh();
+      if (pics.hits.length > 0) {
+        renderPics(pics.hits);
+        page += 1;
+        moreBtn.style.display = 'block';
       } else {
         iziToast.show({
           message:
@@ -70,12 +79,28 @@ document.querySelector('.search-form').addEventListener('submit', event => {
           position: 'topRight',
         });
       }
-    })
-    .catch(error => {
+    } catch (error) {
       loader.remove();
       iziToast.error({
         title: 'Error',
-        message: 'Something is wrong with code again :(',
+        message: 'Something is wrong with the code again :(',
       });
-    });
+    }
+  });
+
+moreBtn.addEventListener('click', async () => {
+  const search = document.querySelector('#search').value;
+  imageResult.appendChild(loader);
+  moreBtn.style.display = 'none';
+  try {
+    const pics = await fetchPics(search, page, perPage);
+    renderPics(pics.hits);
+    page += 1;
+    loader.remove();
+    moreBtn.style.display = 'block';
+  } catch (error) {
+    console.log(error);
+    loader.remove();
+    moreBtn.style.display = 'block';
+  }
 });
