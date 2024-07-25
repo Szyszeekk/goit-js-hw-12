@@ -12,8 +12,8 @@
     />
     
     <title>Page 2</title>
-    <script type="module" crossorigin src="/goit-js-hw-12/assets/vendor-8c59ed88.js"></script>
-    <script type="module" crossorigin src="/goit-js-hw-12/assets/main-c4012fba.js"></script>
+    <script type="module" crossorigin src="/goit-js-hw-12/assets/vendor-c493984e.js"></script>
+    <script type="module" crossorigin src="/goit-js-hw-12/assets/main-86b89811.js"></script>
     <link rel="stylesheet" href="/goit-js-hw-12/assets/vendor-1cd1f9d9.css">
   </head>
   <body>
@@ -28,6 +28,7 @@
     <div id="image-result">
       <ul class="image-list"></ul>
     </div>
+    <button type="button" class="more-btn">Load more</button>
   </body>
 </html>
 
@@ -55,6 +56,20 @@
     border-radius: 10%;
     font-family: Montserrat;
     font-weight: 500;
+  }
+
+  .more-btn {
+    background-color: #4e75ff;
+    border: none;
+    height: 100%;
+    cursor: pointer;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 10%;
+    font-family: Montserrat;
+    font-weight: 500;
+    display: none;
+    margin: auto;
   }
 
   button:hover {
