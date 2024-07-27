@@ -7,6 +7,7 @@ import axios from 'axios';
 const moreBtn = document.querySelector('.more-btn');
 let page = 1;
 let perPage = 40;
+let currentSearch = '';
 
 const imageResult = document.querySelector('#image-result');
 const loader = document.createElement('span');
@@ -53,22 +54,49 @@ function renderPics(pics) {
   lightbox.refresh();
 }
 
+function checkIfMorePics(pics) {
+  if (pics.length < perPage) {
+    moreBtn.style.display = 'none';
+    iziToast.show({
+      message: "We're sorry, but you've reached the end of search results",
+      backgroundColor: 'lightblue',
+      position: 'topRight',
+    });
+  } else {
+    moreBtn.style.display = 'block';
+  }
+}
+
+function smoothScroll() {
+  const firstImageItem = document.querySelector('.image-list li');
+  if (firstImageItem) {
+    const itemHeight = firstImageItem.getBoundingClientRect().height;
+    window.scrollBy({
+      top: itemHeight * 2,
+      left: 0,
+      behavior: 'smooth',
+    });
+  }
+}
+
 document
   .querySelector('.search-form')
   .addEventListener('submit', async event => {
     event.preventDefault();
     const search = document.querySelector('#search').value;
-    imageResult.appendChild(loader);
+    currentSearch = search;
+    page = 1;
     imageList.innerHTML = '';
+    imageResult.appendChild(loader);
     moreBtn.style.display = 'none';
 
     try {
-      const pics = await fetchPics(search, 1, perPage);
+      const pics = await fetchPics(search, page, perPage);
       loader.remove();
       if (pics.hits.length > 0) {
         renderPics(pics.hits);
         page += 1;
-        moreBtn.style.display = 'block';
+        checkIfMorePics(pics.hits);
       } else {
         iziToast.show({
           message:
@@ -89,15 +117,15 @@ document
   });
 
 moreBtn.addEventListener('click', async () => {
-  const search = document.querySelector('#search').value;
   imageResult.appendChild(loader);
   moreBtn.style.display = 'none';
   try {
-    const pics = await fetchPics(search, page, perPage);
+    const pics = await fetchPics(currentSearch, page, perPage);
     renderPics(pics.hits);
     page += 1;
     loader.remove();
-    moreBtn.style.display = 'block';
+    checkIfMorePics(pics.hits);
+    smoothScroll();
   } catch (error) {
     console.log(error);
     loader.remove();
